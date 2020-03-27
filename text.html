@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<title>SageZk - SagaTable</title>  
+<script type="text/javascript">  
+//<![CDATA[ 
+var m; 
+ 
+function searchNodes(oRoot, sTagName, fCallBack) { 
+ if (!oRoot.hasChildNodes()) return; 
+ var cns = oRoot.childNodes; 
+ for (var i = 0; i < cns.length; ++i) { 
+  if (cns[i].nodeType == 1 && 
+      cns[i].nodeName == sTagName) fCallBack(cns[i]); 
+  searchNodes(cns[i], sTagName, fCallBack); 
+ } 
+}; 
+ 
+function dealclick() { 
+ this.parentNode.parentNode.style.backgroundColor = this.checked ? "#CCCCCC" : "#FFFFFF"; 
+ var r, c; 
+ outer: for (var y = 0; y < m.length; ++y) { 
+  for (var x = 0; x < m[y].length; ++x) { 
+   if (m[y][x] == this) { 
+    r = y; 
+    c = x; 
+    break outer; 
+   } 
+  } 
+ } 
+ if (r == 0 && c == 0) { 
+  for (var y = 0; y < m.length; ++y) { 
+   for (var x = 0; x < m[y].length; ++x) { 
+    m[y][x].checked = this.checked; 
+    m[y][x].parentNode.parentNode.style.backgroundColor = this.checked ? "#CCCCCC" : "#FFFFFF"; 
+   } 
+  }  
+ } else if (r == 0) { 
+  for (var y = 1; y < m.length; ++y) { 
+   m[y][c].checked = this.checked; 
+   m[y][c].parentNode.parentNode.style.backgroundColor = this.checked ? "#CCCCCC" : "#FFFFFF"; 
+  } 
+ } else if (c == 0) { 
+  for (var x = 1; x < m[0].length; ++x) { 
+   m[r][x].checked = this.checked; 
+   m[r][x].parentNode.parentNode.style.backgroundColor = this.checked ? "#CCCCCC" : "#FFFFFF"; 
+  } 
+ } else { 
+  // 
+ } 
+} 
+ 
+window.onload = function() { 
+ m = new Array(); 
+ var frm = document.getElementById("f1"); 
+ searchNodes(frm, "TR", 
+  function(tr) { 
+   var cbs = new Array(); 
+   var tds = tr.childNodes; 
+   for (var i = 0; i < tds.length; ++i) { 
+    if (tds[i].nodeType != 1) continue; 
+    var txt = document.createTextNode(tds[i].innerHTML); 
+    var chk = document.createElement("input"); 
+    chk.setAttribute("type", "checkbox"); 
+    chk.onclick = dealclick; 
+    var lbl = document.createElement("label"); 
+    lbl.appendChild(txt); 
+    lbl.appendChild(chk); 
+    cbs.push(chk); 
+    tds[i].replaceChild(lbl, tds[i].firstChild); 
+   } 
+   m.push(cbs); 
+  } 
+ ); 
+}; 
+//]]>  
+</script>  
+</head>  
+  
+<body>  
+<form id="f1">  
+<table border="1">  
+    <tr>   
+        <th>全选</th>  
+        <th>1月</th>  
+        <th>2月</th>  
+        <th>3月</th>  
+        <th>4月</th>  
+        <th>5月</th>  
+        <th>6月</th>  
+    </tr>  
+    <tr>  
+        <th>2008年</th>  
+        <td>1000</td>  
+        <td>2000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+    </tr>  
+    <tr>  
+        <th>2007年</th>  
+        <td>4000</td>  
+        <td>5000</td>  
+        <td>6000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+    </tr>  
+    <tr>  
+        <th>2006年</th>  
+        <td>7000</td>  
+        <td>8000</td>  
+        <td>9000</td>  
+        <td>3000</td>  
+        <td>3000</td>             
+        <td>3000</td>  
+    </tr>  
+    <tr>  
+        <th>2005年</th>  
+        <td>7000</td>  
+        <td>8000</td>  
+        <td>9000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+        <td>3000</td>  
+    </tr>  
+</table>  
+</form>   
+</body>  
+</html>

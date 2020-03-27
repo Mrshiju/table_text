@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>table</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .table thead{
+            color: white;
+            background-color: #1F4E78;
+        }
+        .table td{
+           width: 200px;
+           height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="table_box">
+        <table id="addressTable" class="ui-jqgrid-htable ui-common-table table table-bordered"  cellspacing="0" border="1" style="text-align: center;"> 
+            <thead>
+                <tr>
+                    <td style='text-align:center;width:35px;'>
+                        <input  id="selectAll" role='checkbox' type='checkbox'  />
+                    </td>
+                    <td>
+                        序号
+                    </td>
+                    <td>
+                        省份
+                    </td>
+                    <td>
+                        合计
+                        <input role="checkbox" type="checkbox" class="checkbox">
+                    </td>
+                    <td>
+                        移动
+                        <input role="checkbox" type="checkbox" class="checkbox">
+                    </td>
+                    <td>
+                        电信
+                        <input role="checkbox" type="checkbox" class="checkbox">
+                    </td>
+                    <td>
+                        联通
+                        <input role="checkbox" type="checkbox" class="checkbox">
+                    </td>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                
+
+
+                <!-- 渲染区域 -->
+            </tbody>
+    </table>
+    <button id="btn">获取值</button>
+    <div class="list">
+
+    </div>
+    </div>
+</body>
+<script> 
+
+     let data = [{
+          id:1,
+          province:"山西",
+          totale:1000,
+          move:100,
+          uni:700,
+          telecom:200 
+       },
+       {
+          id:2,
+          province:"河南",
+          totale:1000,
+          move:100,
+          uni:700,
+          telecom:200 
+       }
+       ];
+       let str = '';
+       data.map(function(item,index){
+         str += `<tr>
+                    <td style="text-align:center;width:35px;">
+                        <input  role="checkbox" type="checkbox" class="cbox checkboxRow">
+                    </td>
+                    <td name="id">
+                       ${item.id}
+                    </td>
+                    <td name="province">
+                        ${item.province}
+                    </td>
+                    <td name="totale">
+                       <span>${item.totale}</span> 
+                       <input role="checkbox" type="checkbox" class="checkbox">
+                    </td>
+                    <td name="move">
+                        <span>${item.move}</span> 
+                        <input role="checkbox" type="checkbox" class="cbox checkbox">
+                     </td>
+                     <td name="uni">
+                        <span>${item.uni}</span> 
+                        <input role="checkbox" type="checkbox" class="cbox checkbox">
+                     </td>
+                     <td name="telecom">
+                        <span>${item.telecom}</span> 
+                        <input role="checkbox" type="checkbox" class="cbox checkbox">
+                     </td>
+                </tr>`
+       })
+       $("#tbody").append(str);
+       //获取数据
+      let selectList = [];
+      //点击全选判断是否多选
+      $("#selectAll").change(function() {
+          var checkboxs = $("#addressTable").find("input[role='checkbox']");
+          let isChecked = $(this).is(":checked");
+          
+          //避免使用foreach，jq对象的遍历会使浏览器崩溃
+          for(var i = 0; i < checkboxs.length; i++) {
+              //临时变量，必须，否则只能选中最后一条记录
+              var temp = i;
+              $(checkboxs[temp]).prop("checked",isChecked);
+         }
+     });
+     //点击首列单个确定全选
+     $('#tbody .checkboxRow').on('click', function () {
+        if ($('.checkboxRow').length == $('.checkboxRow:checked').length) {
+            $('#selectAll').prop('checked', true);
+            let checkboxs = $("#tbody").find("input[role='checkbox']");
+            $("thead tr td:not(:first)").find("input").prop("checked",true)
+            let isChecked = $(this).is(":checked");
+          
+            for(var i = 0; i < checkboxs.length; i++) {
+                //临时变量，必须，否则只能选中最后一条记录
+                
+            }
+        } else {
+
+
+            $('#selectAll').prop('checked', false);
+            $("thead tr td:not(:first)").find("input").prop("checked",false)
+            
+            
+        }
+
+        //选中后面
+        let isChecked = $(this).is(":checked");
+        if(isChecked == false){
+            $(this).parent().siblings().find("input[role='checkbox']").prop("checked",false)
+        }else{
+            $(this).parent().siblings().find("input[role='checkbox']").prop("checked",true)
+            // $("thead tr td:not(:first)").find("input").prop("checked",true)
+        }
+    })
+
+    //列选择
+    $('#tbody tr .checkbox').on('click', function () {
+      let $this = $(this)
+
+      let line = $this.context.offsetParent.cellIndex; 
+      //横列第一栏
+      if($(this).parent('td').parent('tr').find(".checkbox:checked").length == $(this).parent('td').parent('tr').find(".checkbox").length){
+        $this.parent().siblings().find(".checkboxRow").prop("checked",true)
+
+      }else{
+        $this.parent().siblings().find(".checkboxRow").prop("checked",false)
+      }
+    
+
+       
+       
+
+    //   }
+      //纵列选择
+        let lineTab =$("#tbody >tr");
+    
+        let count = 0
+        for(let  i = 0; i < lineTab.length ; i++){
+            if(lineTab.eq(i).find("td").eq(line).find("input").is(":checked")){
+                count++;
+            }
+          
+       
+        if(count == lineTab.length){
+            $("thead tr td").eq(line).find("input").prop("checked",true)
+        }else{
+            $("thead tr td").eq(line).find("input").prop("checked",false)
+
+        }
+      
+      //全选
+        if ($('.checkbox').length == $('.checkbox:checked').length) {
+            $('#selectAll').prop('checked', true);
+        } else {
+            $('#selectAll').prop('checked', false);
+        }
+
+    // 列选择判断
+    // if(){
+
+    // }
+        }
+    })
+    
+    //顶部列选择
+    $('thead .checkbox').on("click",function(){
+        let line = $(this).context.offsetParent.cellIndex;
+        let lineTab =$("#tbody >tr");
+        if($(this).is(":checked")){
+            
+            //列全部选择
+            for(let  i = 0; i < lineTab.length ; i++){
+                lineTab.eq(i).find("td").eq(line).find("input").prop("checked",true)
+            }
+            //通过列  判断行是否选择
+          
+        }else{
+            for(let  i = 0; i < lineTab.length ; i++){
+                lineTab.eq(i).find("td").eq(line).find("input").prop("checked",false)
+            }
+        }
+
+
+        let $this = $('#tbody .checkbox')
+            
+            
+        if ($('.checkbox').length == $('.checkbox:checked').length) {
+            $this.parent().siblings().find(".checkboxRow").prop("checked",true)
+            $('#selectAll').prop('checked', true);
+        } else {
+            $('#selectAll').prop('checked', false);
+            $this.parent().siblings().find(".checkboxRow").prop("checked",false)
+        }
+    //     
+    })
+
+
+
+    $('#btn').click(function(){
+      let check = $('#tbody .checkbox:checked');
+      //公共方法
+      function getCheck(item,type){
+        let data ;
+        data =  $(item).find(`td[name='${type}']`).find("input.checkbox:checked").parent().children("span").html()
+        if(data){
+            return data
+        }else{
+            return null
+        }
+          
+      }
+      selectList= [],
+      check.parent().parent("tr").each(function(index,item){
+        //获取数据
+        let checkData = {
+            id :"",
+            province:"",
+            totale:"",
+            move:"",
+            uni:"",
+            telecom:""
+        };
+        checkData.id = $(item).find("td[name='id']").html().trim().replace(/\s/g,"");
+        checkData.province = $(item).find("td[name='province']").html().trim().replace(/\s/g,"");
+        checkData.totale = getCheck(item,'totale')
+        checkData.move = getCheck(item,'move')
+        checkData.uni = getCheck(item,'uni')
+        checkData.telecom = getCheck(item,'telecom')
+        selectList.push(checkData)
+      })
+      $(".list").text(JSON.stringify(selectList))
+    })
+
+
+     
+</script>
+</html>
